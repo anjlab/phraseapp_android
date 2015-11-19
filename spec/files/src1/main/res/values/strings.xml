@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="application_name">My App</string>
+    <string name="ok">OK</string>
+    <string name="version" tools:ignore="MissingTranslation">1</string>
+    <string name="formatted">%s is %d</string>
+</resources>

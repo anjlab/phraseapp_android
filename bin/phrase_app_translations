@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require 'phraseapp_android'
+
+unless ENV['PHRASE_ACCESS_TOKEN']
+  puts 'you have\'nt set PHRASE_ACCESS_TOKEN environment variable! You can create access token at https://phraseapp.com/settings/oauth_access_tokens'.red
+  exit 1
+end
+
+unless ENV['PHRASE_PROJECT_ID']
+  puts 'you have\'nt set PHRASE_PROJECT_ID environment variable! You find your Project Id at https://phraseapp.com/projects'.red
+  exit 1
+end
+
+if ARGV.empty?
+  puts <<END_TEXT
+Usage phrase_app_translations COMMAND
+
+Manage Android project localization data with PhraseApp
+
+Commands:
+  list_missing        List missing translations
+  pull                Download translations from PhraseApp
+  push                Upload translations to PhraseApp
+  reformat            Sort translations texts alphabetically in local files
+  check_formatting    Check formatting arguments in local files
+END_TEXT
+else
+  case ARGV[0].downcase
+    when 'list_missing'
+      PhraseApp::Android::MissingTranslations.new.list
+    when 'pull'
+      PhraseApp::Android::MissingTranslations.new.pull
+    when 'push'
+      PhraseApp::Android::Upload.new.perform ARGV[1] || 'en'
+    when 'reformat'
+      PhraseApp::Android::FileFormatter.new.apply_to_all_files
+    when 'check_formatting'
+      PhraseApp::Android::FormatCheck.new.perform
+    else
+      puts 'Unknown command!'.red
+  end
+end

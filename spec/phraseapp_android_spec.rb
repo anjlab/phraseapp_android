@@ -4,7 +4,7 @@ describe 'PhraseApp for Android' do
 
   let (:client_params) do
     {
-        path: 'spec/files/src1'
+        path: 'spec/files/src'
     }
   end
 
@@ -35,14 +35,16 @@ describe 'PhraseApp for Android' do
 
     expect(doc).to_not be_nil
     values = doc.at('//resources').element_children
-    expect(values.size).to eq(6)
+    expect(values.size).to eq(8)
     expectations = [
         %w(string application_name проверка),
         %w(string formatted %s\ это\ %d),
+        %w(string-array codes 1),
         %w(string application_name SW\ App),
         %w(string ok Sawa),
         %w(string formatted %s\ -\ %\ d),
-        %w(string-array languages 2)
+        %w(string-array languages 2),
+        %w(string-array codes 1)
     ]
     expectations.each_with_index do |e, idx|
       expect(values[idx].name).to eq(e[0])
@@ -65,21 +67,30 @@ describe 'PhraseApp for Android' do
     allow_any_instance_of(PhraseApp::Android::FileFormatter).to receive(:apply).and_return(false)
 
     client = PhraseApp::Android::MissingTranslations.new client_params
+    allow(client).to receive(:write_to_file) { true }
     allow(client.client).to receive(:locale_download) do
       <<JSON
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="application_name">проверка</string>
+    <string name="application_name">проверка!</string>
     <string name="ok">хорошо</string>
+    <string name="ok2">ok2</string>
     <string-array name="languages">
         <item>Английский</item>
         <item>Свахили</item>
+    </string-array>
+    <string-array name="codes">
+      <item>RUS</item>
     </string-array>
 </resources>
 JSON
     end
 
-    expect(client.pull_locale('ru')).to eq([1, 1])
+    pulled = client.pull_locale('ru')
+    expect(pulled[:strings][:added]).to eq(1)
+    expect(pulled[:strings][:updated]).to eq(1)
+    expect(pulled[:arrays][:added]).to eq(1)
+    expect(pulled[:arrays][:updated]).to eq(1)
   end
 
   it 'should check string formats' do

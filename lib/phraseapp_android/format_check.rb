@@ -11,7 +11,9 @@ class PhraseApp::Android::FormatCheck < PhraseApp::Android::PhraseAppClient
   end
 
   def perform
-    locales.map { |l| perform_for_locale(l) }.reduce(:+)
+    count = locales.map { |l| perform_for_locale(l) }.reduce(:+)
+    puts 'All texts are ok.'.green
+    count
   end
 
   def perform_for_locale(locale)

@@ -47,8 +47,12 @@ module PhraseApp
       end
 
       def write_xml_to_file(path, doc)
+        write_to_file path, doc.to_xml(ident: 4)
+      end
+
+      def write_to_file(path, contents)
         File.open path, 'w' do |f|
-          f.write doc.to_xml(ident: 4)
+          f.write contents
         end
       end
 

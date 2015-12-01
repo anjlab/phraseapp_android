@@ -23,11 +23,9 @@ class PhraseApp::Android::Upload < PhraseApp::Android::PhraseAppClient
     res = doc.create_element 'resources', 'xmlns:tools' => 'http://schemas.android.com/tools'
     doc.add_child res
 
-    locales.each do |locale|
-      %w(strings arrays).each do |file|
-        read_locale_file(file, locale).at('//resources').element_children.each do |el|
-          res.add_child(el) if el.attr('tools:ignore').nil?
-        end
+    %w(strings arrays).each do |file|
+      read_locale_file(file, nil).at('//resources').element_children.each do |el|
+        res.add_child(el) if el.attr('tools:ignore').nil?
       end
     end
 
